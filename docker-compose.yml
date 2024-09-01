@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  bet-maker:
+    build: ./betmaker/bet-maker
+    ports:
+      - "8001:8000"
+    depends_on:
+      - db
+      - line-provider
+    env_file:
+      - ./betmaker/bet-maker/.env
+    volumes:
+      - ./betmaker/bet-maker:/app
+    working_dir: /app
+
+  line-provider:
+    build: ./bsw-test-line-provider
+    ports:
+      - "8000:8000"
+
+  db:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: bets_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
